@@ -9,8 +9,7 @@ Aplicación de consola en Python para que el bibliotecario de una pequeña bibli
 registre libros (identificador, título, autor), consulte el catálogo con el estado de cada libro,
 registre préstamos a estudiantes con fecha prevista de devolución, registre devoluciones y consulte
 los préstamos vencidos. Un libro no puede prestarse a dos estudiantes a la vez.
-Fuente de verdad: [`docs/intent.md`](docs/intent.md).
-
+Fuente de verdad
 ## 2. Fase actual
 
 | Fase (actividad del taller) | Artefacto | Estado |
