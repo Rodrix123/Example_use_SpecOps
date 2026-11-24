@@ -1,4 +1,4 @@
-"""Pruebas del servicio (TASK-006 a TASK-011).
+"""Pruebas del servicio (TASK-006 a TASK-011; TEST-016 a TEST-056).
 
 Usan un almacén simulado en memoria con contador de llamadas a `guardar` y una fecha fija
 (tests/test-plan.md §2 y §3).
@@ -68,6 +68,78 @@ class PruebaBaseServicio(unittest.TestCase):
         error = ErrorNegocio("Identificador repetido")
         self.assertEqual(error.motivo, "Identificador repetido")
         self.assertEqual(str(error), "Identificador repetido")
+
+
+class PruebaRegistrarLibro(unittest.TestCase):
+    """TASK-007: TEST-019 a TEST-028."""
+
+    def assertRechazo(self, servicio, almacen, palabras, *argumentos):
+        """El registro se rechaza con un motivo que contiene `palabras`, sin cambios ni guardado."""
+        antes = instantanea(servicio)
+        guardados = almacen.guardados
+        with self.assertRaises(ErrorNegocio) as contexto:
+            servicio.registrar_libro(*argumentos)
+        self.assertIn(palabras, contexto.exception.motivo.lower())
+        self.assertEqual(instantanea(servicio), antes)
+        self.assertEqual(almacen.guardados, guardados)
+
+    def test_019_registro_completo(self):
+        servicio, almacen = crear()
+        servicio.registrar_libro(*L001)
+        self.assertEqual(servicio.libros, [Libro(*L001)])
+        self.assertEqual(servicio.prestamos, [])  # sin préstamo activo: disponible
+        self.assertEqual(almacen.guardados, 1)
+        self.assertEqual(almacen.libros, [Libro(*L001)])
+
+    def test_020_falta_identificador(self):
+        servicio, almacen = crear()
+        self.assertRechazo(servicio, almacen, "falta el identificador", "", L001[1], L001[2])
+        self.assertEqual(servicio.libros, [])
+
+    def test_021_falta_titulo(self):
+        servicio, almacen = crear()
+        self.assertRechazo(servicio, almacen, "falta el título", "L-001", "", L001[2])
+
+    def test_022_falta_autor(self):
+        servicio, almacen = crear()
+        self.assertRechazo(servicio, almacen, "falta el autor", "L-001", L001[1], "")
+
+    def test_023_solo_espacios_cuenta_como_faltante(self):
+        servicio, almacen = crear()
+        self.assertRechazo(servicio, almacen, "falta el título", "L-001", "   ", L001[2])
+
+    def _con_l001(self):
+        servicio, almacen = crear()
+        servicio.registrar_libro(*L001)
+        self.assertEqual(almacen.guardados, 1)
+        return servicio, almacen
+
+    def test_024_identificador_repetido(self):
+        servicio, almacen = self._con_l001()
+        self.assertRechazo(servicio, almacen, "ya existe", "L-001", "El Aleph", "Jorge Luis Borges")
+        self.assertEqual(servicio.libros, [Libro(*L001)])
+        self.assertEqual(almacen.guardados, 1)
+
+    def test_025_repetido_con_distinta_mayuscula(self):
+        servicio, almacen = self._con_l001()
+        self.assertRechazo(servicio, almacen, "ya existe", "l-001", "El Aleph", "Jorge Luis Borges")
+        self.assertEqual(len(servicio.libros), 1)
+
+    def test_026_repetido_con_espacios_alrededor(self):
+        servicio, almacen = self._con_l001()
+        self.assertRechazo(servicio, almacen, "ya existe", " L-001 ", "El Aleph", "Jorge Luis Borges")
+        self.assertEqual(len(servicio.libros), 1)
+
+    def test_027_rechazos_no_modifican_datos(self):
+        prestamo = Prestamo("L-001", "Ana Pérez", FUTURA, True)
+        servicio, almacen = crear([L001, L002], [prestamo])
+        self.assertRechazo(servicio, almacen, "ya existe", *L002)
+        self.assertRechazo(servicio, almacen, "falta el autor", "L-003", "Rayuela", "")
+        self.assertEqual(almacen.guardados, 0)
+
+    def test_028_primero_se_validan_datos_completos(self):
+        servicio, almacen = crear([L001])
+        self.assertRechazo(servicio, almacen, "falta el título", "L-001", "", L001[2])
 
 
 if __name__ == "__main__":

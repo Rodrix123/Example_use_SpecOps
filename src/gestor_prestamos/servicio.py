@@ -7,6 +7,8 @@ valida primero y modifica después. Un rechazo se señala con `ErrorNegocio`, qu
 
 from datetime import date
 
+from gestor_prestamos.modelos import Libro
+
 
 class ErrorNegocio(Exception):
     """Rechazo de una operación por una regla de negocio; `motivo` explica la causa."""
@@ -27,3 +29,46 @@ class Servicio:
     def hoy(self) -> date:
         """Fecha actual según el proveedor inyectado (design Decisión 6)."""
         return self._hoy()
+
+    # --- Apoyo -------------------------------------------------------------------------------
+
+    def _buscar_libro(self, identificador):
+        """Libro cuyo identificador coincide sin distinguir mayúsculas ni espacios al inicio y al
+        final (design Decisión 7), o `None`."""
+        clave = _clave(identificador)
+        for libro in self.libros:
+            if _clave(libro.identificador) == clave:
+                return libro
+        return None
+
+    def _guardar(self, libros, prestamos):
+        """Guarda y, solo si el guardado tuvo éxito, reemplaza los datos en memoria."""
+        self._almacen.guardar(libros, prestamos)
+        self.libros, self.prestamos = libros, prestamos
+
+    # --- Operaciones ---------------------------------------------------------------------------
+
+    def registrar_libro(self, identificador, titulo, autor):
+        """Registra un libro disponible (HU-001, RN-01; CU-001).
+
+        Valida primero que los tres datos estén completos y luego que el identificador no exista.
+        El libro se guarda tal como se escribió.
+        """
+        for valor, nombre in ((identificador, "el identificador"), (titulo, "el título"), (autor, "el autor")):
+            if _falta(valor):
+                raise ErrorNegocio(f"Falta {nombre}.")
+        if self._buscar_libro(identificador) is not None:
+            raise ErrorNegocio(f"Ya existe un libro con el identificador {identificador.strip()}.")
+        libro = Libro(identificador, titulo, autor)
+        self._guardar(self.libros + [libro], list(self.prestamos))
+        return libro
+
+
+def _falta(valor) -> bool:
+    """Un dato falta si queda vacío tras quitar espacios al inicio y al final (design Decisión 7)."""
+    return valor is None or not str(valor).strip()
+
+
+def _clave(identificador) -> str:
+    """Forma de comparar identificadores: sin espacios alrededor y sin distinguir mayúsculas."""
+    return str(identificador).strip().casefold()

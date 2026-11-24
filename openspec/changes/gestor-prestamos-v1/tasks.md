@@ -87,7 +87,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     negocio expone su motivo. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/servicio.py`, `tests/test_servicio.py`.
 
-- [ ] 4.2 TASK-007 Registrar libro
+- [x] 4.2 TASK-007 Registrar libro
   - **Objetivo:** Implementar el registro de un libro con sus validaciones.
   - **Requisito asociado:** HU-001, RN-01, RNF-03; CU-001; design Decisión 7.
   - **Resultado esperado:** Operación que valida primero datos completos (vacío tras quitar espacios
