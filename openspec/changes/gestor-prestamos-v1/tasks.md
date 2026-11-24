@@ -15,7 +15,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
 
 ## 1. Preparación del proyecto
 
-- [ ] 1.1 TASK-001 Crear el paquete `gestor_prestamos` y fijar el comando de pruebas
+- [x] 1.1 TASK-001 Crear el paquete `gestor_prestamos` y fijar el comando de pruebas
   - **Objetivo:** Dejar la estructura base en `src/` y una forma única de ejecutar las pruebas.
   - **Requisito asociado:** RS-01, RS-02, RS-03; design Decisiones 1 y 10.
   - **Resultado esperado:** Paquete `src/gestor_prestamos/` con los módulos `modelos`, `servicio`,
@@ -26,7 +26,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
   - **Límites de modificación:** `src/gestor_prestamos/*.py`, `tests/test_humo.py`,
     `tests/__init__.py` (solo si hace falta), `README.md` (solo la sección «Pruebas»).
 
-- [ ] 1.2 TASK-002 Excluir de Git el archivo de datos
+- [x] 1.2 TASK-002 Excluir de Git el archivo de datos
   - **Objetivo:** Que `ops/biblioteca.json` no se versione.
   - **Requisito asociado:** RNF-01; design Decisión 10.
   - **Resultado esperado:** `ops/.gitignore` que excluye `biblioteca.json`. No se crea archivo
@@ -37,7 +37,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
 
 ## 2. Modelos
 
-- [ ] 2.1 TASK-003 Definir `Libro` y `Prestamo`
+- [x] 2.1 TASK-003 Definir `Libro` y `Prestamo`
   - **Objetivo:** Representar los datos del dominio sin lógica ni entrada/salida.
   - **Requisito asociado:** HU-001, HU-003, RN-04; design Decisiones 2 y 3.
   - **Resultado esperado:** `Libro` (identificador, título, autor) y `Prestamo` (identificador del
@@ -50,7 +50,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
 
 ## 3. Almacén
 
-- [ ] 3.1 TASK-004 Cargar los datos desde `ops/biblioteca.json`
+- [x] 3.1 TASK-004 Cargar los datos desde `ops/biblioteca.json`
   - **Objetivo:** Leer libros y préstamos del archivo JSON.
   - **Requisito asociado:** RNF-01; design Decisión 2 y Riesgos (archivo corrupto, ruta).
   - **Resultado esperado:** Función `cargar` que devuelve libros y préstamos como objetos del
@@ -63,7 +63,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     pasa.
   - **Límites de modificación:** `src/gestor_prestamos/almacen.py`, `tests/test_almacen.py`.
 
-- [ ] 3.2 TASK-005 Guardar los datos de forma atómica
+- [x] 3.2 TASK-005 Guardar los datos de forma atómica
   - **Objetivo:** Escribir libros y préstamos sin riesgo de dejar el archivo corrupto.
   - **Requisito asociado:** RNF-01, RNF-03; design Decisión 2.
   - **Resultado esperado:** Función `guardar` que escribe UTF-8 sin escapar tildes, con fechas
@@ -76,7 +76,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
 
 ## 4. Servicio: reglas de negocio
 
-- [ ] 4.1 TASK-006 Base del servicio: error de negocio, almacén y fecha inyectados
+- [x] 4.1 TASK-006 Base del servicio: error de negocio, almacén y fecha inyectados
   - **Objetivo:** Preparar el servicio para probarse con datos y fecha simulados.
   - **Requisito asociado:** RNF-03; design Decisiones 1, 6 y 7.
   - **Resultado esperado:** Error de negocio que lleva el motivo del rechazo; servicio que recibe el
@@ -87,7 +87,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     negocio expone su motivo. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/servicio.py`, `tests/test_servicio.py`.
 
-- [ ] 4.2 TASK-007 Registrar libro
+- [x] 4.2 TASK-007 Registrar libro
   - **Objetivo:** Implementar el registro de un libro con sus validaciones.
   - **Requisito asociado:** HU-001, RN-01, RNF-03; CU-001; design Decisión 7.
   - **Resultado esperado:** Operación que valida primero datos completos (vacío tras quitar espacios
@@ -100,7 +100,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     llamadas a `guardar` no cambian. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/servicio.py`, `tests/test_servicio.py`.
 
-- [ ] 4.3 TASK-008 Consultar el catálogo con el estado de cada libro
+- [x] 4.3 TASK-008 Consultar el catálogo con el estado de cada libro
   - **Objetivo:** Devolver todos los libros con su estado derivado de los préstamos.
   - **Requisito asociado:** HU-002; CU-002 (flujo principal); design Decisión 3.
   - **Resultado esperado:** Operación que devuelve, por libro, identificador, título, autor y estado
@@ -111,7 +111,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     una lista vacía. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/servicio.py`, `tests/test_servicio.py`.
 
-- [ ] 4.4 TASK-009 Registrar préstamo
+- [x] 4.4 TASK-009 Registrar préstamo
   - **Objetivo:** Implementar el préstamo de un libro disponible a un estudiante.
   - **Requisito asociado:** HU-003, RN-02, RN-04, RNF-03; CU-003; design Decisiones 3, 5, 6 y 7.
   - **Resultado esperado:** Operación que valida en orden: libro existe (búsqueda sin distinguir
@@ -125,7 +125,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     encuentra el libro; en los rechazos los datos y `guardar` no cambian. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/servicio.py`, `tests/test_servicio.py`.
 
-- [ ] 4.5 TASK-010 Registrar devolución
+- [x] 4.5 TASK-010 Registrar devolución
   - **Objetivo:** Implementar la devolución de un libro prestado.
   - **Requisito asociado:** HU-004, RN-04, RN-02, RNF-03; CU-004; design Decisiones 3 y 7.
   - **Resultado esperado:** Operación que valida en orden: libro existe → está prestado. Si es
@@ -137,7 +137,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/servicio.py`, `tests/test_servicio.py`.
 
-- [ ] 4.6 TASK-011 Consultar préstamos vencidos
+- [x] 4.6 TASK-011 Consultar préstamos vencidos
   - **Objetivo:** Devolver exactamente los préstamos vencidos.
   - **Requisito asociado:** HU-005, RN-03; CU-002 (flujo alternativo 1a); design Decisión 6.
   - **Resultado esperado:** Operación que devuelve los préstamos activos con fecha prevista anterior
@@ -150,7 +150,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
 
 ## 5. Consola
 
-- [ ] 5.1 TASK-012 Convertir fechas `DD/MM/AAAA`
+- [x] 5.1 TASK-012 Convertir fechas `DD/MM/AAAA`
   - **Objetivo:** Traducir la fecha escrita por el bibliotecario a fecha y viceversa.
   - **Requisito asociado:** HU-003; design Decisiones 4 y 5.
   - **Resultado esperado:** Funciones en `consola` que convierten texto `DD/MM/AAAA` a fecha
@@ -161,7 +161,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     conserva la fecha. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.2 TASK-013 Menú principal
+- [x] 5.2 TASK-013 Menú principal
   - **Objetivo:** Ofrecer el menú numérico y el ciclo de la aplicación.
   - **Requisito asociado:** RNF-02; design Decisión 8.
   - **Resultado esperado:** Menú con una opción numerada por operación (registrar libro, consultar
@@ -173,7 +173,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     muestran aviso sin error; la opción de salir termina el ciclo. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.3 TASK-014 Opción «Registrar libro»
+- [x] 5.3 TASK-014 Opción «Registrar libro»
   - **Objetivo:** Conectar CU-001 con el servicio.
   - **Requisito asociado:** HU-001, RN-01, RNF-03; CU-001.
   - **Resultado esperado:** La opción solicita identificador, título y autor, uno por vez; confirma
@@ -183,7 +183,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     muestra el motivo; en los rechazos los datos no cambian. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.4 TASK-015 Opción «Consultar catálogo»
+- [x] 5.4 TASK-015 Opción «Consultar catálogo»
   - **Objetivo:** Mostrar el catálogo con el estado de cada libro.
   - **Requisito asociado:** HU-002; CU-002 (flujo principal).
   - **Resultado esperado:** La opción lista cada libro con identificador, título, autor y estado; si
@@ -194,7 +194,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.5 TASK-016 Opción «Registrar préstamo»
+- [x] 5.5 TASK-016 Opción «Registrar préstamo»
   - **Objetivo:** Conectar CU-003 con el servicio.
   - **Requisito asociado:** HU-003, RN-02, RN-04, RNF-02, RNF-03; CU-003.
   - **Resultado esperado:** La opción solicita identificador del libro, estudiante y fecha prevista
@@ -206,7 +206,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.6 TASK-017 Opción «Registrar devolución»
+- [x] 5.6 TASK-017 Opción «Registrar devolución»
   - **Objetivo:** Conectar CU-004 con el servicio.
   - **Requisito asociado:** HU-004, RNF-02, RNF-03; CU-004.
   - **Resultado esperado:** La opción solicita el identificador del libro, llama al servicio y
@@ -216,7 +216,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     rechazos los datos no cambian. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.7 TASK-018 Opción «Consultar préstamos vencidos»
+- [x] 5.7 TASK-018 Opción «Consultar préstamos vencidos»
   - **Objetivo:** Mostrar los préstamos vencidos.
   - **Requisito asociado:** HU-005, RN-03; CU-002 (flujo alternativo 1a).
   - **Resultado esperado:** La opción lista cada préstamo vencido con libro, estudiante y fecha
@@ -226,7 +226,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     sin vencidos muestra el aviso. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.8 TASK-019 Punto de entrada y uso en el README
+- [x] 5.8 TASK-019 Punto de entrada y uso en el README
   - **Objetivo:** Poder iniciar la aplicación completa con un solo comando.
   - **Requisito asociado:** RNF-01, RS-01, RS-03, PER-01; design Decisión 10 y Riesgos.
   - **Resultado esperado:** Punto de entrada que crea el almacén con la ruta por defecto
@@ -243,7 +243,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
 
 ## 6. Verificación de integración
 
-- [ ] 6.1 TASK-020 Verificar persistencia y rechazos de extremo a extremo
+- [x] 6.1 TASK-020 Verificar persistencia y rechazos de extremo a extremo
   - **Objetivo:** Comprobar sobre un archivo real que los datos sobreviven al reinicio y que un
     rechazo no los altera.
   - **Requisito asociado:** RNF-01, RNF-03.
@@ -256,7 +256,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     comando de pruebas pasa.
   - **Límites de modificación:** `tests/test_integracion.py`.
 
-- [ ] 6.2 TASK-021 Verificar el flujo completo por consola
+- [x] 6.2 TASK-021 Verificar el flujo completo por consola
   - **Objetivo:** Comprobar que HU-001 a HU-005 funcionan encadenadas desde el menú.
   - **Requisito asociado:** HU-001, HU-002, HU-003, HU-004, HU-005, RN-02, RN-03.
   - **Resultado esperado:** Una prueba de integración que recorre el menú con entradas simuladas y

@@ -1,5 +1,13 @@
 schema: spec-driven
 
+operations:
+  apply:
+    guidance:
+      - Implementar únicamente la tarea indicada por el usuario (TASK-NNN) y detenerse al terminarla.
+      - Modificar solo los archivos de "Límites de modificación" de esa tarea.
+      - Antes de implementar, leer sus pruebas TEST-NNN en tests/test-plan.md.
+      - Ejecutar las pruebas y reportar el resultado real; no marcar la casilla si no pasan.
+
 # Project context (optional)
 # Add only constraints that should guide OpenSpec artifacts and workflows.
 # Include constraints an agent cannot infer by reading the code.
