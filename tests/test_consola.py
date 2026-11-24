@@ -3,7 +3,12 @@
 import unittest
 from datetime import date
 
-from gestor_prestamos.consola import ejecutar_menu, fecha_a_texto, texto_a_fecha
+from gestor_prestamos.consola import Consola, ejecutar_menu, fecha_a_texto, texto_a_fecha
+from gestor_prestamos.modelos import Libro, Prestamo
+from gestor_prestamos.servicio import DISPONIBLE, PRESTADO
+from tests.test_servicio import AYER, FUTURA, HOY, L001, L002, L003, PASADA, crear
+
+L002_CON_L001 = ("L-001", "El Aleph", "Jorge Luis Borges")
 
 
 class PruebaFechas(unittest.TestCase):
@@ -106,6 +111,55 @@ class PruebaMenu(unittest.TestCase):
         terminal = self.preparar(["6", "1"])
         self.assertEqual(self.llamadas, [])
         self.assertEqual(terminal.pendientes, ["1"])
+
+
+def ejecutar_consola(entradas, libros=(), prestamos=(), hoy=HOY):
+    """Recorre el menú con un servicio real sobre un almacén simulado y fecha fija."""
+    servicio, almacen = crear(libros, prestamos, hoy)
+    terminal = Terminal(entradas)
+    Consola(servicio, terminal.leer, terminal.escribir).ejecutar()
+    return terminal, servicio, almacen
+
+
+def preguntas_de_la_operacion(terminal):
+    """Preguntas hechas después de elegir la opción y antes de volver al menú."""
+    return [p for p in terminal.preguntas if p != "Elija una opción: "]
+
+
+class PruebaOpcionRegistrarLibro(unittest.TestCase):
+    """TASK-014: TEST-071 a TEST-075."""
+
+    def test_071_registro_con_datos_completos(self):
+        terminal, servicio, _ = ejecutar_consola(["1", *L001, "6"])
+        self.assertEqual(preguntas_de_la_operacion(terminal), ["Identificador: ", "Título: ", "Autor: "])
+        self.assertIn("Libro registrado: L-001", terminal.texto)
+        self.assertEqual(servicio.libros, [Libro(*L001)])
+        self.assertEqual(servicio.consultar_catalogo()[0].estado, DISPONIBLE)
+        self.assertEqual(terminal.lineas.count("6. Salir"), 2)
+
+    def assertFalta(self, entradas, dato):
+        terminal, servicio, almacen = ejecutar_consola(["1", *entradas, "6"])
+        self.assertIn(f"Falta {dato}", terminal.texto)
+        self.assertNotIn("Libro registrado", terminal.texto)
+        self.assertEqual(servicio.libros, [])
+        self.assertEqual(almacen.guardados, 0)
+        self.assertEqual(terminal.lineas.count("6. Salir"), 2)
+
+    def test_072_falta_identificador(self):
+        self.assertFalta(["", L001[1], L001[2]], "el identificador")
+
+    def test_073_falta_titulo(self):
+        self.assertFalta(["L-001", "", L001[2]], "el título")
+
+    def test_074_falta_autor(self):
+        self.assertFalta(["L-001", L001[1], ""], "el autor")
+
+    def test_075_identificador_repetido(self):
+        terminal, servicio, almacen = ejecutar_consola(["1", *L002_CON_L001, "6"], libros=[L001])
+        self.assertIn("Ya existe un libro con el identificador L-001", terminal.texto)
+        self.assertNotIn("Libro registrado", terminal.texto)
+        self.assertEqual(servicio.libros, [Libro(*L001)])
+        self.assertEqual(almacen.guardados, 0)
 
 
 if __name__ == "__main__":

@@ -7,6 +7,9 @@ Es la única capa que lee del teclado o imprime. El bibliotecario escribe y ve l
 import re
 from datetime import date
 
+from gestor_prestamos.almacen import ErrorAlmacen
+from gestor_prestamos.servicio import ErrorNegocio
+
 _FORMATO_FECHA = re.compile(r"(\d{2})/(\d{2})/(\d{4})")
 
 
@@ -63,3 +66,51 @@ def ejecutar_menu(operaciones, leer=input, escribir=print):
             operaciones[int(opcion) - 1]()
         else:
             escribir(f"Opción no válida. Escriba un número del 1 al {SALIR}.")
+
+
+# --- Opciones del menú (TASK-014 a TASK-018) ------------------------------------------------------
+
+
+class Consola:
+    """Conecta los casos de uso con el servicio: pregunta un dato por vez y muestra el resultado
+    o el motivo del rechazo, sin confirmaciones adicionales (RNF-02, RNF-03)."""
+
+    def __init__(self, servicio, leer=input, escribir=print):
+        self.servicio = servicio
+        self.leer = leer
+        self.escribir = escribir
+
+    def ejecutar(self):
+        """Ciclo del menú principal."""
+        operaciones = [
+            self.registrar_libro,
+            self._pendiente,
+            self._pendiente,
+            self._pendiente,
+            self._pendiente,
+        ]
+        ejecutar_menu(operaciones, self.leer, self.escribir)
+
+    def _pendiente(self):
+        self.escribir("Opción no disponible todavía.")
+
+    def _intentar(self, operacion, accion):
+        """Ejecuta `operacion`; si el servicio la rechaza o no puede guardar, muestra el motivo."""
+        try:
+            return operacion()
+        except ErrorNegocio as error:
+            self.escribir(f"No se pudo {accion}: {error.motivo}")
+        except ErrorAlmacen as error:
+            self.escribir(f"No se pudo {accion}: {error}")
+        return None
+
+    def registrar_libro(self):
+        """CU-001: solicita identificador, título y autor (HU-001, RN-01)."""
+        identificador = self.leer("Identificador: ")
+        titulo = self.leer("Título: ")
+        autor = self.leer("Autor: ")
+        libro = self._intentar(
+            lambda: self.servicio.registrar_libro(identificador, titulo, autor), "registrar el libro"
+        )
+        if libro is not None:
+            self.escribir(f"Libro registrado: {libro.identificador} - {libro.titulo}.")

@@ -173,7 +173,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     muestran aviso sin error; la opción de salir termina el ciclo. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.3 TASK-014 Opción «Registrar libro»
+- [x] 5.3 TASK-014 Opción «Registrar libro»
   - **Objetivo:** Conectar CU-001 con el servicio.
   - **Requisito asociado:** HU-001, RN-01, RNF-03; CU-001.
   - **Resultado esperado:** La opción solicita identificador, título y autor, uno por vez; confirma
