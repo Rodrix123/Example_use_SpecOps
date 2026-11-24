@@ -226,7 +226,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     sin vencidos muestra el aviso. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.8 TASK-019 Punto de entrada y uso en el README
+- [x] 5.8 TASK-019 Punto de entrada y uso en el README
   - **Objetivo:** Poder iniciar la aplicación completa con un solo comando.
   - **Requisito asociado:** RNF-01, RS-01, RS-03, PER-01; design Decisión 10 y Riesgos.
   - **Resultado esperado:** Punto de entrada que crea el almacén con la ruta por defecto

@@ -7,8 +7,10 @@ Es la única capa que lee del teclado o imprime. El bibliotecario escribe y ve l
 import re
 from datetime import date
 
-from gestor_prestamos.almacen import ErrorAlmacen
-from gestor_prestamos.servicio import ErrorNegocio
+import sys
+
+from gestor_prestamos.almacen import Almacen, ErrorAlmacen
+from gestor_prestamos.servicio import ErrorNegocio, Servicio
 
 _FORMATO_FECHA = re.compile(r"(\d{2})/(\d{2})/(\d{4})")
 
@@ -159,3 +161,20 @@ class Consola:
                 f"{vencido.libro_id} | {vencido.titulo} | {vencido.estudiante} | "
                 f"{fecha_a_texto(vencido.fecha_prevista)}"
             )
+
+
+# --- Arranque (TASK-019) --------------------------------------------------------------------------
+
+
+def iniciar() -> int:
+    """Arranca la aplicación con el archivo de datos por defecto y la fecha del sistema.
+
+    Devuelve 0 al salir del menú, o 1 si el archivo de datos no se puede leer (no lo sobrescribe).
+    """
+    try:
+        servicio = Servicio(Almacen())
+    except ErrorAlmacen as error:
+        print(f"Error: {error}", file=sys.stderr)
+        return 1
+    Consola(servicio).ejecutar()
+    return 0
