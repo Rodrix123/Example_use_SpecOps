@@ -26,7 +26,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
   - **Límites de modificación:** `src/gestor_prestamos/*.py`, `tests/test_humo.py`,
     `tests/__init__.py` (solo si hace falta), `README.md` (solo la sección «Pruebas»).
 
-- [ ] 1.2 TASK-002 Excluir de Git el archivo de datos
+- [x] 1.2 TASK-002 Excluir de Git el archivo de datos
   - **Objetivo:** Que `ops/biblioteca.json` no se versione.
   - **Requisito asociado:** RNF-01; design Decisión 10.
   - **Resultado esperado:** `ops/.gitignore` que excluye `biblioteca.json`. No se crea archivo
