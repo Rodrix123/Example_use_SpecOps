@@ -56,15 +56,13 @@
      (RN-03), con libro, estudiante y fecha prevista.
   2. Los préstamos devueltos no se muestran.
 
-- 1b. El bibliotecario indica que desea consultar los libros dsponibles:
-  1. El sistema muestra los préstamos activos con fecha prevista anterior a la fecha actual
-     (RN-03)
-  
+- 1b. El bibliotecario indica que desea consultar los libros disponibles:
+  1. El sistema muestra los libros en estado *disponible*, con identificador, título y autor.
 
 **Excepciones**
 - 2a. No hay libros registrados: el sistema lo informa.
 - 1a.1a. No hay préstamos vencidos: el sistema lo informa.
-- 1a.1a. No hay libros disponibles, el sistema lo informa.
+- 1b.1a. No hay libros disponibles: el sistema lo informa.
 
 ### CU-003 — Prestar libro
 
