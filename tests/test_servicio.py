@@ -261,5 +261,49 @@ class PruebaRegistrarPrestamo(unittest.TestCase):
         rechazo(self, servicio, almacen, "registrar_prestamo", "falta el estudiante", "L-002", "", None)
 
 
+class PruebaRegistrarDevolucion(unittest.TestCase):
+    """TASK-010: TEST-044 a TEST-049."""
+
+    def test_044_devolucion_valida(self):
+        servicio, almacen = crear([L001], [Prestamo("L-001", "Ana Pérez", FUTURA, True)])
+        servicio.registrar_devolucion("L-001")
+        self.assertEqual(servicio.prestamos, [Prestamo("L-001", "Ana Pérez", FUTURA, False)])
+        self.assertEqual(servicio.consultar_catalogo()[0].estado, DISPONIBLE)
+        self.assertEqual(almacen.guardados, 1)
+
+    def test_045_libro_inexistente(self):
+        servicio, almacen = crear([L001])
+        rechazo(self, servicio, almacen, "registrar_devolucion", "no existe", "L-099")
+
+    def test_046_libro_no_prestado(self):
+        servicio, almacen = crear([L001])
+        rechazo(self, servicio, almacen, "registrar_devolucion", "no está prestado", "L-001")
+
+    def test_047_tras_devolver_se_puede_prestar_de_nuevo(self):
+        servicio, _ = crear([L001], [Prestamo("L-001", "Ana Pérez", FUTURA, True)])
+        servicio.registrar_devolucion("L-001")
+        servicio.registrar_prestamo("L-001", "Luis Gómez", FUTURA)
+        self.assertEqual(
+            servicio.prestamos,
+            [Prestamo("L-001", "Ana Pérez", FUTURA, False), Prestamo("L-001", "Luis Gómez", FUTURA, True)],
+        )
+        self.assertEqual(servicio.consultar_catalogo()[0].estado, PRESTADO)
+
+    def test_048_rechazos_no_modifican_datos(self):
+        servicio, almacen = crear([L001, L002], [Prestamo("L-001", "Ana Pérez", FUTURA, True)])
+        rechazo(self, servicio, almacen, "registrar_devolucion", "no existe", "L-099")
+        rechazo(self, servicio, almacen, "registrar_devolucion", "no está prestado", "L-002")
+        self.assertEqual(almacen.guardados, 0)
+
+    def test_049_prestamo_activo_desde_registro_hasta_devolucion(self):
+        servicio, _ = crear([L001])
+        servicio.registrar_prestamo("L-001", "Ana Pérez", FUTURA)
+        self.assertTrue(servicio.prestamos[0].activo)
+        servicio.consultar_catalogo()
+        self.assertTrue(servicio.prestamos[0].activo)
+        servicio.registrar_devolucion("L-001")
+        self.assertFalse(servicio.prestamos[0].activo)
+
+
 if __name__ == "__main__":
     unittest.main()

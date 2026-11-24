@@ -125,7 +125,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     encuentra el libro; en los rechazos los datos y `guardar` no cambian. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/servicio.py`, `tests/test_servicio.py`.
 
-- [ ] 4.5 TASK-010 Registrar devolución
+- [x] 4.5 TASK-010 Registrar devolución
   - **Objetivo:** Implementar la devolución de un libro prestado.
   - **Requisito asociado:** HU-004, RN-04, RN-02, RNF-03; CU-004; design Decisiones 3 y 7.
   - **Resultado esperado:** Operación que valida en orden: libro existe → está prestado. Si es

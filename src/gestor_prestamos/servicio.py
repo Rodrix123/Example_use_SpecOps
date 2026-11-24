@@ -5,7 +5,7 @@ valida primero y modifica después. Un rechazo se señala con `ErrorNegocio`, qu
 (RNF-03).
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date
 
 from gestor_prestamos.modelos import Libro, Prestamo
@@ -125,6 +125,22 @@ class Servicio:
         prestamo = Prestamo(libro.identificador, estudiante, fecha_prevista, True)
         self._guardar(list(self.libros), self.prestamos + [prestamo])
         return prestamo
+
+    def registrar_devolucion(self, identificador):
+        """Cierra el préstamo activo de un libro prestado (HU-004, RN-04; CU-004).
+
+        Orden de validación: libro existe → está prestado. El préstamo se conserva como inactivo.
+        """
+        libro = self._buscar_libro(identificador)
+        if libro is None:
+            raise ErrorNegocio(f"No existe un libro con el identificador {str(identificador).strip()}.")
+        activo = self._prestamo_activo(libro)
+        if activo is None:
+            raise ErrorNegocio(f"El libro {libro.identificador} no está prestado.")
+        cerrado = replace(activo, activo=False)
+        prestamos = [cerrado if prestamo is activo else prestamo for prestamo in self.prestamos]
+        self._guardar(list(self.libros), prestamos)
+        return cerrado
 
 
 def _falta(valor) -> bool:
