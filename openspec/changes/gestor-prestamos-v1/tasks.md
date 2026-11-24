@@ -111,7 +111,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     una lista vacía. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/servicio.py`, `tests/test_servicio.py`.
 
-- [ ] 4.4 TASK-009 Registrar préstamo
+- [x] 4.4 TASK-009 Registrar préstamo
   - **Objetivo:** Implementar el préstamo de un libro disponible a un estudiante.
   - **Requisito asociado:** HU-003, RN-02, RN-04, RNF-03; CU-003; design Decisiones 3, 5, 6 y 7.
   - **Resultado esperado:** Operación que valida en orden: libro existe (búsqueda sin distinguir

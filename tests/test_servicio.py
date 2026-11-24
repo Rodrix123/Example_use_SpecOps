@@ -180,5 +180,86 @@ class PruebaConsultarCatalogo(unittest.TestCase):
         self.assertEqual(almacen.guardados, 0)
 
 
+def rechazo(prueba, servicio, almacen, operacion, palabras, *argumentos):
+    """La operación se rechaza con un motivo que contiene `palabras`; datos y guardado sin cambios."""
+    antes = instantanea(servicio)
+    guardados = almacen.guardados
+    with prueba.assertRaises(ErrorNegocio) as contexto:
+        getattr(servicio, operacion)(*argumentos)
+    prueba.assertIn(palabras, contexto.exception.motivo.lower())
+    prueba.assertEqual(instantanea(servicio), antes)
+    prueba.assertEqual(almacen.guardados, guardados)
+    return contexto.exception.motivo
+
+
+def activos(servicio, libro_id):
+    return [p for p in servicio.prestamos if p.libro_id == libro_id and p.activo]
+
+
+class PruebaRegistrarPrestamo(unittest.TestCase):
+    """TASK-009: TEST-034 a TEST-043."""
+
+    def test_034_prestamo_valido(self):
+        servicio, almacen = crear([L001])
+        servicio.registrar_prestamo("L-001", "Ana Pérez", FUTURA)
+        self.assertEqual(servicio.prestamos, [Prestamo("L-001", "Ana Pérez", FUTURA, True)])
+        self.assertEqual(servicio.consultar_catalogo()[0].estado, PRESTADO)
+        self.assertEqual(almacen.guardados, 1)
+
+    def test_035_libro_inexistente(self):
+        servicio, almacen = crear([L001])
+        rechazo(self, servicio, almacen, "registrar_prestamo", "no existe", "L-099", "Ana Pérez", FUTURA)
+
+    def test_036_libro_ya_prestado(self):
+        servicio, almacen = crear([L001], [Prestamo("L-001", "Ana Pérez", FUTURA, True)])
+        rechazo(self, servicio, almacen, "registrar_prestamo", "ya está prestado",
+                "L-001", "Luis Gómez", date(2026, 12, 20))
+        self.assertEqual(activos(servicio, "L-001"), [Prestamo("L-001", "Ana Pérez", FUTURA, True)])
+
+    def test_037_falta_el_estudiante(self):
+        servicio, almacen = crear([L001])
+        for estudiante in ("", "   "):
+            with self.subTest(estudiante=estudiante):
+                rechazo(self, servicio, almacen, "registrar_prestamo", "falta el estudiante",
+                        "L-001", estudiante, FUTURA)
+
+    def test_038_fecha_sin_valor(self):
+        servicio, almacen = crear([L001])
+        rechazo(self, servicio, almacen, "registrar_prestamo", "no es válida", "L-001", "Ana Pérez", None)
+
+    def test_039_fecha_anterior_a_hoy(self):
+        servicio, almacen = crear([L001])
+        rechazo(self, servicio, almacen, "registrar_prestamo", "anterior a hoy", "L-001", "Ana Pérez", AYER)
+
+    def test_040_fecha_de_hoy_se_acepta(self):
+        servicio, _ = crear([L001])
+        servicio.registrar_prestamo("L-001", "Ana Pérez", HOY)
+        self.assertEqual(activos(servicio, "L-001"), [Prestamo("L-001", "Ana Pérez", HOY, True)])
+
+    def test_041_busqueda_sin_distinguir_mayusculas(self):
+        servicio, _ = crear([L001])
+        servicio.registrar_prestamo("l-001", "Ana Pérez", FUTURA)
+        self.assertEqual(activos(servicio, "L-001"), [Prestamo("L-001", "Ana Pérez", FUTURA, True)])
+
+    def test_042_rechazos_no_modifican_datos(self):
+        servicio, almacen = crear([L001, L002], [Prestamo("L-001", "Ana Pérez", FUTURA, True)])
+        casos = [
+            ("no existe", ("L-099", "Luis Gómez", FUTURA)),
+            ("ya está prestado", ("L-001", "Luis Gómez", FUTURA)),
+            ("falta el estudiante", ("L-002", "", FUTURA)),
+            ("anterior a hoy", ("L-002", "Luis Gómez", AYER)),
+        ]
+        for palabras, argumentos in casos:
+            with self.subTest(palabras=palabras):
+                rechazo(self, servicio, almacen, "registrar_prestamo", palabras, *argumentos)
+        self.assertEqual(almacen.guardados, 0)
+
+    def test_043_orden_de_validacion(self):
+        servicio, almacen = crear([L001, L002], [Prestamo("L-001", "Ana Pérez", FUTURA, True)])
+        rechazo(self, servicio, almacen, "registrar_prestamo", "no existe", "L-099", "", None)
+        rechazo(self, servicio, almacen, "registrar_prestamo", "ya está prestado", "L-001", "", None)
+        rechazo(self, servicio, almacen, "registrar_prestamo", "falta el estudiante", "L-002", "", None)
+
+
 if __name__ == "__main__":
     unittest.main()

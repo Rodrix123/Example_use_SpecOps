@@ -8,7 +8,7 @@ valida primero y modifica después. Un rechazo se señala con `ErrorNegocio`, qu
 from dataclasses import dataclass
 from datetime import date
 
-from gestor_prestamos.modelos import Libro
+from gestor_prestamos.modelos import Libro, Prestamo
 
 DISPONIBLE = "disponible"
 PRESTADO = "prestado"
@@ -103,6 +103,28 @@ class Servicio:
                 )
             )
         return entradas
+
+    def registrar_prestamo(self, identificador, estudiante, fecha_prevista):
+        """Presta un libro disponible a un estudiante (HU-003, RN-02, RN-04; CU-003).
+
+        `fecha_prevista` llega ya convertida a fecha, o `None` si no es válida. Orden de validación
+        (design Decisión 7): libro existe → disponible → estudiante indicado → fecha válida. Una
+        fecha es válida si no es anterior a hoy; la de hoy se acepta (design Decisión 5).
+        """
+        libro = self._buscar_libro(identificador)
+        if libro is None:
+            raise ErrorNegocio(f"No existe un libro con el identificador {str(identificador).strip()}.")
+        if self._prestamo_activo(libro) is not None:
+            raise ErrorNegocio(f"El libro {libro.identificador} ya está prestado.")
+        if _falta(estudiante):
+            raise ErrorNegocio("Falta el estudiante.")
+        if fecha_prevista is None:
+            raise ErrorNegocio("La fecha prevista no es válida.")
+        if fecha_prevista < self.hoy():
+            raise ErrorNegocio("La fecha prevista no es válida: es anterior a hoy.")
+        prestamo = Prestamo(libro.identificador, estudiante, fecha_prevista, True)
+        self._guardar(list(self.libros), self.prestamos + [prestamo])
+        return prestamo
 
 
 def _falta(valor) -> bool:
