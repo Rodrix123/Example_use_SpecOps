@@ -16,8 +16,8 @@ Fuente de verdad
 |---|---|---|
 | 1. Intención de ingeniería | `docs/intent.md` | Aprobado |
 | 2. Requisitos | `docs/requirements.md` | Aprobado |
-| 3. Especificación del producto | `docs/product-spec.md` | **Siguiente** |
-| 4. Diseño técnico | `docs/technical-spec.md` | Pendiente |
+| 3. Especificación del producto | `docs/product-spec.md` | En revisión |
+| 4. Diseño técnico | `docs/technical-spec.md` | **Siguiente** |
 | 5. Planificación de tareas | `tasks/` | Pendiente |
 | 6. Planificación de pruebas | `tests/test-plan.md` | Pendiente |
 | 7. Implementación controlada | `src/`, `tests/` | Pendiente |
