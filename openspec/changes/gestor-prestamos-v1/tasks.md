@@ -37,7 +37,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
 
 ## 2. Modelos
 
-- [ ] 2.1 TASK-003 Definir `Libro` y `Prestamo`
+- [x] 2.1 TASK-003 Definir `Libro` y `Prestamo`
   - **Objetivo:** Representar los datos del dominio sin lógica ni entrada/salida.
   - **Requisito asociado:** HU-001, HU-003, RN-04; design Decisiones 2 y 3.
   - **Resultado esperado:** `Libro` (identificador, título, autor) y `Prestamo` (identificador del
