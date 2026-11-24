@@ -86,7 +86,7 @@ class Consola:
             self.registrar_libro,
             self.consultar_catalogo,
             self.registrar_prestamo,
-            self._pendiente,
+            self.registrar_devolucion,
             self._pendiente,
         ]
         ejecutar_menu(operaciones, self.leer, self.escribir)
@@ -141,3 +141,12 @@ class Consola:
                 f"Préstamo registrado: {prestamo.libro_id} a {prestamo.estudiante} "
                 f"hasta el {fecha_a_texto(prestamo.fecha_prevista)}."
             )
+
+    def registrar_devolucion(self):
+        """CU-004: solicita el identificador del libro (HU-004)."""
+        identificador = self.leer("Identificador del libro: ")
+        prestamo = self._intentar(
+            lambda: self.servicio.registrar_devolucion(identificador), "registrar la devolución"
+        )
+        if prestamo is not None:
+            self.escribir(f"Devolución registrada: {prestamo.libro_id} está disponible.")

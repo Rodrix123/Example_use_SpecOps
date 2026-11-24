@@ -237,5 +237,33 @@ class PruebaOpcionRegistrarPrestamo(unittest.TestCase):
                 self.assertRechazado(["L-001", "Ana Pérez", fecha], motivo)
 
 
+class PruebaOpcionRegistrarDevolucion(unittest.TestCase):
+    """TASK-017: TEST-085 a TEST-087."""
+
+    def test_085_devolucion_de_libro_prestado(self):
+        terminal, servicio, _ = ejecutar_consola(
+            ["4", "L-001", "6"], [L001], [Prestamo("L-001", "Ana Pérez", FUTURA, True)]
+        )
+        self.assertEqual(len(preguntas_de_la_operacion(terminal)), 1)
+        self.assertIn("Devolución registrada", terminal.texto)
+        self.assertEqual(servicio.prestamos, [Prestamo("L-001", "Ana Pérez", FUTURA, False)])
+        self.assertEqual(servicio.consultar_catalogo()[0].estado, DISPONIBLE)
+        self.assertEqual(terminal.lineas.count("6. Salir"), 2)
+
+    def assertRechazado(self, identificador, motivo):
+        terminal, servicio, almacen = ejecutar_consola(["4", identificador, "6"], [L001])
+        self.assertIn(motivo, terminal.texto)
+        self.assertNotIn("Devolución registrada", terminal.texto)
+        self.assertEqual(servicio.prestamos, [])
+        self.assertEqual(almacen.guardados, 0)
+        self.assertEqual(terminal.lineas.count("6. Salir"), 2)
+
+    def test_086_libro_inexistente(self):
+        self.assertRechazado("L-099", "No existe un libro")
+
+    def test_087_libro_no_prestado(self):
+        self.assertRechazado("L-001", "no está prestado")
+
+
 if __name__ == "__main__":
     unittest.main()

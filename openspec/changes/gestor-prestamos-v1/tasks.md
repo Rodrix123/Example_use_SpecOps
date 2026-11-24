@@ -206,7 +206,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.6 TASK-017 Opción «Registrar devolución»
+- [x] 5.6 TASK-017 Opción «Registrar devolución»
   - **Objetivo:** Conectar CU-004 con el servicio.
   - **Requisito asociado:** HU-004, RNF-02, RNF-03; CU-004.
   - **Resultado esperado:** La opción solicita el identificador del libro, llama al servicio y
