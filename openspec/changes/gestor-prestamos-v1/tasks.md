@@ -50,7 +50,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
 
 ## 3. Almacén
 
-- [ ] 3.1 TASK-004 Cargar los datos desde `ops/biblioteca.json`
+- [x] 3.1 TASK-004 Cargar los datos desde `ops/biblioteca.json`
   - **Objetivo:** Leer libros y préstamos del archivo JSON.
   - **Requisito asociado:** RNF-01; design Decisión 2 y Riesgos (archivo corrupto, ruta).
   - **Resultado esperado:** Función `cargar` que devuelve libros y préstamos como objetos del
