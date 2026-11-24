@@ -194,7 +194,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.5 TASK-016 Opción «Registrar préstamo»
+- [x] 5.5 TASK-016 Opción «Registrar préstamo»
   - **Objetivo:** Conectar CU-003 con el servicio.
   - **Requisito asociado:** HU-003, RN-02, RN-04, RNF-02, RNF-03; CU-003.
   - **Resultado esperado:** La opción solicita identificador del libro, estudiante y fecha prevista

@@ -85,7 +85,7 @@ class Consola:
         operaciones = [
             self.registrar_libro,
             self.consultar_catalogo,
-            self._pendiente,
+            self.registrar_prestamo,
             self._pendiente,
             self._pendiente,
         ]
@@ -126,3 +126,18 @@ class Consola:
             if entrada.estudiante is not None:
                 linea += f" | {entrada.estudiante} | {fecha_a_texto(entrada.fecha_prevista)}"
             self.escribir(linea)
+
+    def registrar_prestamo(self):
+        """CU-003: solicita libro, estudiante y fecha prevista (HU-003, RN-02, RN-04)."""
+        identificador = self.leer("Identificador del libro: ")
+        estudiante = self.leer("Estudiante: ")
+        fecha = texto_a_fecha(self.leer("Fecha prevista de devolución (DD/MM/AAAA): "))
+        prestamo = self._intentar(
+            lambda: self.servicio.registrar_prestamo(identificador, estudiante, fecha),
+            "registrar el préstamo",
+        )
+        if prestamo is not None:
+            self.escribir(
+                f"Préstamo registrado: {prestamo.libro_id} a {prestamo.estudiante} "
+                f"hasta el {fecha_a_texto(prestamo.fecha_prevista)}."
+            )

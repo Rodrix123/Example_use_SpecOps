@@ -196,5 +196,46 @@ class PruebaOpcionConsultarCatalogo(unittest.TestCase):
         self.assertIn("No hay libros registrados.", terminal.lineas)
 
 
+class PruebaOpcionRegistrarPrestamo(unittest.TestCase):
+    """TASK-016: TEST-079 a TEST-084."""
+
+    def assertRechazado(self, entradas, motivo, libros=(L001,), prestamos=()):
+        terminal, servicio, almacen = ejecutar_consola(["3", *entradas, "6"], libros, prestamos)
+        self.assertIn(motivo, terminal.texto)
+        self.assertNotIn("Préstamo registrado", terminal.texto)
+        self.assertEqual(almacen.guardados, 0)
+        self.assertEqual(servicio.prestamos, list(prestamos))
+        self.assertEqual(terminal.lineas.count("6. Salir"), 2)
+        return servicio
+
+    def test_079_prestamo_de_libro_disponible(self):
+        terminal, servicio, _ = ejecutar_consola(["3", "L-001", "Ana Pérez", "15/12/2026", "6"], [L001])
+        self.assertEqual(len(preguntas_de_la_operacion(terminal)), 3)
+        self.assertIn("Préstamo registrado", terminal.texto)
+        self.assertEqual(servicio.prestamos, [Prestamo("L-001", "Ana Pérez", FUTURA, True)])
+        self.assertEqual(servicio.consultar_catalogo()[0].estado, PRESTADO)
+        self.assertEqual(terminal.lineas.count("6. Salir"), 2)
+
+    def test_080_fecha_con_formato_invalido(self):
+        self.assertRechazado(["L-001", "Ana Pérez", "2026-12-15"], "no es válida")
+
+    def test_081_falta_el_estudiante(self):
+        self.assertRechazado(["L-001", "", "15/12/2026"], "Falta el estudiante")
+
+    def test_082_libro_inexistente(self):
+        self.assertRechazado(["L-099", "Ana Pérez", "15/12/2026"], "No existe un libro")
+
+    def test_083_libro_ya_prestado(self):
+        activo = Prestamo("L-001", "Ana Pérez", FUTURA, True)
+        servicio = self.assertRechazado(["L-001", "Luis Gómez", "20/12/2026"], "ya está prestado",
+                                        prestamos=[activo])
+        self.assertEqual([p for p in servicio.prestamos if p.activo], [activo])
+
+    def test_084_fecha_anterior_a_hoy_o_inexistente(self):
+        for fecha, motivo in (("30/11/2026", "anterior a hoy"), ("31/02/2026", "no es válida")):
+            with self.subTest(fecha=fecha):
+                self.assertRechazado(["L-001", "Ana Pérez", fecha], motivo)
+
+
 if __name__ == "__main__":
     unittest.main()
