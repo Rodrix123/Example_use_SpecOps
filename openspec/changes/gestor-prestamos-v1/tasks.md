@@ -150,7 +150,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
 
 ## 5. Consola
 
-- [ ] 5.1 TASK-012 Convertir fechas `DD/MM/AAAA`
+- [x] 5.1 TASK-012 Convertir fechas `DD/MM/AAAA`
   - **Objetivo:** Traducir la fecha escrita por el bibliotecario a fecha y viceversa.
   - **Requisito asociado:** HU-003; design Decisiones 4 y 5.
   - **Resultado esperado:** Funciones en `consola` que convierten texto `DD/MM/AAAA` a fecha
