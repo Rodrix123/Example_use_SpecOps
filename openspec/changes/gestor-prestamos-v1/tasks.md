@@ -243,7 +243,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
 
 ## 6. Verificación de integración
 
-- [ ] 6.1 TASK-020 Verificar persistencia y rechazos de extremo a extremo
+- [x] 6.1 TASK-020 Verificar persistencia y rechazos de extremo a extremo
   - **Objetivo:** Comprobar sobre un archivo real que los datos sobreviven al reinicio y que un
     rechazo no los altera.
   - **Requisito asociado:** RNF-01, RNF-03.
