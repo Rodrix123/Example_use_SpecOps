@@ -256,7 +256,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     comando de pruebas pasa.
   - **Límites de modificación:** `tests/test_integracion.py`.
 
-- [ ] 6.2 TASK-021 Verificar el flujo completo por consola
+- [x] 6.2 TASK-021 Verificar el flujo completo por consola
   - **Objetivo:** Comprobar que HU-001 a HU-005 funcionan encadenadas desde el menú.
   - **Requisito asociado:** HU-001, HU-002, HU-003, HU-004, HU-005, RN-02, RN-03.
   - **Resultado esperado:** Una prueba de integración que recorre el menú con entradas simuladas y
