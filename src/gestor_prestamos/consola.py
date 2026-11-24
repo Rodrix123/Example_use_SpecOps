@@ -84,7 +84,7 @@ class Consola:
         """Ciclo del menú principal."""
         operaciones = [
             self.registrar_libro,
-            self._pendiente,
+            self.consultar_catalogo,
             self._pendiente,
             self._pendiente,
             self._pendiente,
@@ -114,3 +114,15 @@ class Consola:
         )
         if libro is not None:
             self.escribir(f"Libro registrado: {libro.identificador} - {libro.titulo}.")
+
+    def consultar_catalogo(self):
+        """CU-002, flujo principal: lista los libros con su estado (HU-002)."""
+        catalogo = self.servicio.consultar_catalogo()
+        if not catalogo:
+            self.escribir("No hay libros registrados.")
+            return
+        for entrada in catalogo:
+            linea = f"{entrada.identificador} | {entrada.titulo} | {entrada.autor} | {entrada.estado}"
+            if entrada.estudiante is not None:
+                linea += f" | {entrada.estudiante} | {fecha_a_texto(entrada.fecha_prevista)}"
+            self.escribir(linea)

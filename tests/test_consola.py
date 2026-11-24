@@ -162,5 +162,39 @@ class PruebaOpcionRegistrarLibro(unittest.TestCase):
         self.assertEqual(almacen.guardados, 0)
 
 
+def linea_con(terminal, texto):
+    """Primera línea de la salida que contiene `texto`."""
+    return next(linea for linea in terminal.lineas if texto in linea)
+
+
+class PruebaOpcionConsultarCatalogo(unittest.TestCase):
+    """TASK-015: TEST-076 a TEST-078."""
+
+    def ejecutar(self):
+        return ejecutar_consola(["2", "6"], libros=[L001, L002],
+                                prestamos=[Prestamo("L-002", "Ana Pérez", FUTURA, True)])[0]
+
+    def test_076_lista_libros_con_su_estado(self):
+        terminal = self.ejecutar()
+        for datos, estado in ((L001, "disponible"), (L002, "prestado")):
+            linea = linea_con(terminal, datos[0])
+            for valor in (*datos, estado):
+                self.assertIn(valor, linea)
+
+    def test_077_libro_prestado_muestra_estudiante_y_fecha(self):
+        terminal = self.ejecutar()
+        l002 = linea_con(terminal, "L-002")
+        self.assertIn("Ana Pérez", l002)
+        self.assertIn("15/12/2026", l002)
+        self.assertNotIn("2026-12-15", terminal.texto)
+        l001 = linea_con(terminal, "L-001")
+        self.assertNotIn("Ana Pérez", l001)
+        self.assertNotIn("/", l001)
+
+    def test_078_catalogo_vacio(self):
+        terminal, _, _ = ejecutar_consola(["2", "6"])
+        self.assertIn("No hay libros registrados.", terminal.lineas)
+
+
 if __name__ == "__main__":
     unittest.main()

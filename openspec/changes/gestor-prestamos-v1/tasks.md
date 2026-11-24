@@ -183,7 +183,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     muestra el motivo; en los rechazos los datos no cambian. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.4 TASK-015 Opción «Consultar catálogo»
+- [x] 5.4 TASK-015 Opción «Consultar catálogo»
   - **Objetivo:** Mostrar el catálogo con el estado de cada libro.
   - **Requisito asociado:** HU-002; CU-002 (flujo principal).
   - **Resultado esperado:** La opción lista cada libro con identificador, título, autor y estado; si
