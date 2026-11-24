@@ -103,7 +103,9 @@ lleva el motivo; `consola` lo muestra y no se guarda nada. El orden sigue los ca
 - Devolver (CU-004 paso 4): libro existe → libro prestado.
 
 Un dato "falta" si queda vacío tras quitar espacios al inicio y al final. El identificador se
-compara tal cual, tras quitar esos espacios (ver Open Questions).
+compara sin distinguir mayúsculas de minúsculas, tras quitar esos espacios: `L-001` y `l-001` son el
+mismo libro (RN-01). Se guarda tal como se escribió, y la misma comparación se usa para buscar el
+libro al prestar y al devolver.
 
 ### 8. Interfaz: menú numérico interactivo
 
@@ -127,6 +129,15 @@ sintaxis y no encajan con el flujo de preguntas de los CU.
 | RNF-02 | 8 |
 | RNF-03 | 2 (escritura atómica), 7 |
 
+### 10. Versión de Python y ruta del archivo de datos
+
+- Versión mínima soportada: Python 3.12. Solo se usa la biblioteca estándar.
+- El archivo de datos es `ops/biblioteca.json`. La ruta se calcula desde la raíz del proyecto, no
+  desde el directorio de ejecución, de modo que ejecutar la aplicación desde otra carpeta no crea un
+  catálogo vacío nuevo.
+- El archivo se excluye de Git con `ops/.gitignore` (CLAUDE.md §3 no admite otros archivos en la raíz).
+- La ruta se documenta en el README.
+
 ## Risks / Trade-offs
 
 - **Archivo de datos corrupto o editado a mano** → al iniciar, si el JSON no se puede leer, la
@@ -137,14 +148,10 @@ sintaxis y no encajan con el flujo de preguntas de los CU.
   copiar el archivo es suficiente para respaldar.
 - **Estado derivado** → cada consulta de catálogo recorre los préstamos. Con el volumen de una
   biblioteca pequeña el costo es despreciable.
-- **Ruta del archivo relativa al directorio de ejecución** → ejecutar desde otra carpeta crea un
-  catálogo vacío nuevo. Mitigación: tarea posterior que fije la ruta y la documente en el README.
+- **Ruta del archivo relativa al directorio de ejecución** → ejecutar desde otra carpeta crearía un
+  catálogo vacío nuevo. Mitigación: la ruta se calcula desde la raíz del proyecto (Decisión 10).
 
 ## Open Questions
 
-- **Mayúsculas en el identificador:** hoy `L-001` y `l-001` son identificadores distintos. Si el
-  equipo prefiere que RN-01 los trate como iguales, cambia la comparación y una prueba, no la
-  estructura.
-- **Versión mínima de Python:** la máquina usa 3.14.4; el código solo usa la biblioteca estándar.
-  Falta fijar la versión mínima soportada.
-- **Ruta final del archivo de datos y su exclusión de Git:** se definen al planificar tareas.
+Ninguna. Se resolvieron al planificar tareas (2026-11-24): mayúsculas en el identificador (Decisión
+7), versión mínima de Python y ruta del archivo de datos (Decisión 10).
