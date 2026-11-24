@@ -8,6 +8,8 @@ Formato del archivo (UTF-8; fechas en ISO `AAAA-MM-DD`):
 """
 
 import json
+import os
+import tempfile
 from datetime import date
 from pathlib import Path
 
@@ -58,3 +60,39 @@ class Almacen:
         except (OSError, ValueError, KeyError, TypeError) as error:
             raise ErrorAlmacen(f"No se pudo leer el archivo de datos {self.ruta}: {error}") from error
         return libros, prestamos
+
+    def guardar(self, libros, prestamos):
+        """Escribe libros y préstamos de forma atómica (RNF-01, RNF-03; design Decisión 2).
+
+        Escribe un archivo temporal en la misma carpeta y lo reemplaza con `os.replace`: si algo
+        falla, el archivo original queda intacto y se lanza `ErrorAlmacen`.
+        """
+        datos = {
+            "libros": [
+                {"id": libro.identificador, "titulo": libro.titulo, "autor": libro.autor}
+                for libro in libros
+            ],
+            "prestamos": [
+                {
+                    "libro_id": prestamo.libro_id,
+                    "estudiante": prestamo.estudiante,
+                    "fecha_prevista": prestamo.fecha_prevista.isoformat(),
+                    "activo": prestamo.activo,
+                }
+                for prestamo in prestamos
+            ],
+        }
+        texto = json.dumps(datos, ensure_ascii=False, indent=2)
+        temporal = None
+        try:
+            self.ruta.parent.mkdir(parents=True, exist_ok=True)
+            with tempfile.NamedTemporaryFile(
+                "w", encoding="utf-8", dir=self.ruta.parent, suffix=".tmp", delete=False
+            ) as archivo:
+                temporal = Path(archivo.name)
+                archivo.write(texto)
+            os.replace(temporal, self.ruta)
+        except OSError as error:
+            if temporal is not None and temporal.exists():
+                temporal.unlink()
+            raise ErrorAlmacen(f"No se pudo guardar el archivo de datos {self.ruta}: {error}") from error

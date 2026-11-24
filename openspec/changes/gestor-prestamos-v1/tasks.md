@@ -63,7 +63,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     pasa.
   - **Límites de modificación:** `src/gestor_prestamos/almacen.py`, `tests/test_almacen.py`.
 
-- [ ] 3.2 TASK-005 Guardar los datos de forma atómica
+- [x] 3.2 TASK-005 Guardar los datos de forma atómica
   - **Objetivo:** Escribir libros y préstamos sin riesgo de dejar el archivo corrupto.
   - **Requisito asociado:** RNF-01, RNF-03; design Decisión 2.
   - **Resultado esperado:** Función `guardar` que escribe UTF-8 sin escapar tildes, con fechas
