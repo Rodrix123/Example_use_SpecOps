@@ -9,7 +9,7 @@ import unittest
 from datetime import date
 
 from gestor_prestamos.modelos import Libro, Prestamo
-from gestor_prestamos.servicio import ErrorNegocio, Servicio
+from gestor_prestamos.servicio import DISPONIBLE, PRESTADO, ErrorNegocio, Servicio
 
 HOY = date(2026, 12, 1)
 AYER = date(2026, 11, 30)
@@ -140,6 +140,44 @@ class PruebaRegistrarLibro(unittest.TestCase):
     def test_028_primero_se_validan_datos_completos(self):
         servicio, almacen = crear([L001])
         self.assertRechazo(servicio, almacen, "falta el título", "L-001", "", L001[2])
+
+
+class PruebaConsultarCatalogo(unittest.TestCase):
+    """TASK-008: TEST-029 a TEST-033."""
+
+    def test_029_varios_libros_disponibles(self):
+        servicio, _ = crear([L001, L002, L003])
+        catalogo = servicio.consultar_catalogo()
+        self.assertEqual(len(catalogo), 3)
+        for entrada, datos in zip(catalogo, (L001, L002, L003)):
+            self.assertEqual((entrada.identificador, entrada.titulo, entrada.autor), datos)
+            self.assertEqual(entrada.estado, DISPONIBLE)
+
+    def test_030_libro_prestado_incluye_estudiante_y_fecha(self):
+        servicio, _ = crear([L001, L002], [Prestamo("L-002", "Ana Pérez", FUTURA, True)])
+        l001, l002 = servicio.consultar_catalogo()
+        self.assertEqual(l002.estado, PRESTADO)
+        self.assertEqual(l002.estudiante, "Ana Pérez")
+        self.assertEqual(l002.fecha_prevista, FUTURA)
+        self.assertEqual(l001.estado, DISPONIBLE)
+        self.assertIsNone(l001.estudiante)
+        self.assertIsNone(l001.fecha_prevista)
+
+    def test_031_libro_devuelto_aparece_disponible(self):
+        servicio, _ = crear([L001], [Prestamo("L-001", "Ana Pérez", PASADA, False)])
+        (entrada,) = servicio.consultar_catalogo()
+        self.assertEqual(entrada.estado, DISPONIBLE)
+
+    def test_032_catalogo_vacio(self):
+        servicio, _ = crear()
+        self.assertEqual(servicio.consultar_catalogo(), [])
+
+    def test_033_consultar_no_modifica_datos(self):
+        servicio, almacen = crear([L001, L002], [Prestamo("L-002", "Ana Pérez", FUTURA, True)])
+        antes = instantanea(servicio)
+        servicio.consultar_catalogo()
+        self.assertEqual(instantanea(servicio), antes)
+        self.assertEqual(almacen.guardados, 0)
 
 
 if __name__ == "__main__":

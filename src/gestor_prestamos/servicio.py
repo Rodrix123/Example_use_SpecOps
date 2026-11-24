@@ -5,9 +5,25 @@ valida primero y modifica después. Un rechazo se señala con `ErrorNegocio`, qu
 (RNF-03).
 """
 
+from dataclasses import dataclass
 from datetime import date
 
 from gestor_prestamos.modelos import Libro
+
+DISPONIBLE = "disponible"
+PRESTADO = "prestado"
+
+
+@dataclass(frozen=True)
+class EntradaCatalogo:
+    """Un libro del catálogo con su estado; estudiante y fecha solo si está prestado (HU-002)."""
+
+    identificador: str
+    titulo: str
+    autor: str
+    estado: str
+    estudiante: str | None = None
+    fecha_prevista: date | None = None
 
 
 class ErrorNegocio(Exception):
@@ -41,6 +57,13 @@ class Servicio:
                 return libro
         return None
 
+    def _prestamo_activo(self, libro):
+        """Préstamo activo del libro, o `None`: el libro está prestado si y solo si lo tiene."""
+        for prestamo in self.prestamos:
+            if prestamo.activo and _clave(prestamo.libro_id) == _clave(libro.identificador):
+                return prestamo
+        return None
+
     def _guardar(self, libros, prestamos):
         """Guarda y, solo si el guardado tuvo éxito, reemplaza los datos en memoria."""
         self._almacen.guardar(libros, prestamos)
@@ -62,6 +85,24 @@ class Servicio:
         libro = Libro(identificador, titulo, autor)
         self._guardar(self.libros + [libro], list(self.prestamos))
         return libro
+
+    def consultar_catalogo(self):
+        """Todos los libros con su estado derivado de los préstamos (HU-002; CU-002; design
+        Decisión 3). No modifica datos."""
+        entradas = []
+        for libro in self.libros:
+            activo = self._prestamo_activo(libro)
+            entradas.append(
+                EntradaCatalogo(
+                    identificador=libro.identificador,
+                    titulo=libro.titulo,
+                    autor=libro.autor,
+                    estado=PRESTADO if activo else DISPONIBLE,
+                    estudiante=activo.estudiante if activo else None,
+                    fecha_prevista=activo.fecha_prevista if activo else None,
+                )
+            )
+        return entradas
 
 
 def _falta(valor) -> bool:

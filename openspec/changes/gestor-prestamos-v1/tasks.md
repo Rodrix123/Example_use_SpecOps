@@ -100,7 +100,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     llamadas a `guardar` no cambian. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/servicio.py`, `tests/test_servicio.py`.
 
-- [ ] 4.3 TASK-008 Consultar el catálogo con el estado de cada libro
+- [x] 4.3 TASK-008 Consultar el catálogo con el estado de cada libro
   - **Objetivo:** Devolver todos los libros con su estado derivado de los préstamos.
   - **Requisito asociado:** HU-002; CU-002 (flujo principal); design Decisión 3.
   - **Resultado esperado:** Operación que devuelve, por libro, identificador, título, autor y estado
