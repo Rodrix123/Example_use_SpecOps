@@ -216,7 +216,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     rechazos los datos no cambian. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.7 TASK-018 Opción «Consultar préstamos vencidos»
+- [x] 5.7 TASK-018 Opción «Consultar préstamos vencidos»
   - **Objetivo:** Mostrar los préstamos vencidos.
   - **Requisito asociado:** HU-005, RN-03; CU-002 (flujo alternativo 1a).
   - **Resultado esperado:** La opción lista cada préstamo vencido con libro, estudiante y fecha

@@ -265,5 +265,43 @@ class PruebaOpcionRegistrarDevolucion(unittest.TestCase):
         self.assertRechazado("L-001", "no está prestado")
 
 
+class PruebaOpcionConsultarVencidos(unittest.TestCase):
+    """TASK-018: TEST-088 a TEST-091."""
+
+    def test_088_prestamo_vencido_se_lista(self):
+        terminal, _, _ = ejecutar_consola(["5", "6"], [L001], [Prestamo("L-001", "Ana Pérez", AYER, True)])
+        linea = linea_con(terminal, "L-001")
+        for valor in ("Cien años de soledad", "Ana Pérez", "30/11/2026"):
+            self.assertIn(valor, linea)
+
+    def test_089_prestamo_devuelto_no_aparece(self):
+        prestamos = [Prestamo("L-001", "Ana Pérez", PASADA, False),
+                     Prestamo("L-002", "Luis Gómez", AYER, True)]
+        terminal, _, _ = ejecutar_consola(["5", "6"], [L001, L002], prestamos)
+        self.assertIn("L-002", terminal.texto)
+        self.assertNotIn("L-001", terminal.texto)
+
+    def test_090_sin_prestamos_vencidos(self):
+        terminal, _, _ = ejecutar_consola(["5", "6"], [L001], [Prestamo("L-001", "Ana Pérez", FUTURA, True)])
+        self.assertIn("No hay préstamos vencidos.", terminal.lineas)
+        self.assertNotIn("L-001", terminal.texto)
+
+    def test_091_lista_exactamente_los_vencidos(self):
+        libros = [L001, L002, L003, ("L-004", "Libro 4", "Autor 4"), ("L-005", "Libro 5", "Autor 5")]
+        prestamos = [
+            Prestamo("L-001", "Ana Pérez", PASADA, True),
+            Prestamo("L-002", "Luis Gómez", AYER, True),
+            Prestamo("L-003", "Ana Pérez", HOY, True),
+            Prestamo("L-004", "Luis Gómez", FUTURA, True),
+            Prestamo("L-005", "Ana Pérez", PASADA, False),
+        ]
+        terminal, _, _ = ejecutar_consola(["5", "6"], libros, prestamos)
+        self.assertIn("10/11/2026", linea_con(terminal, "L-001"))
+        self.assertIn("Luis Gómez", linea_con(terminal, "L-002"))
+        self.assertIn("30/11/2026", linea_con(terminal, "L-002"))
+        for ausente in ("L-003", "L-004", "L-005"):
+            self.assertNotIn(ausente, terminal.texto)
+
+
 if __name__ == "__main__":
     unittest.main()

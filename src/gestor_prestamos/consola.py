@@ -87,12 +87,9 @@ class Consola:
             self.consultar_catalogo,
             self.registrar_prestamo,
             self.registrar_devolucion,
-            self._pendiente,
+            self.consultar_vencidos,
         ]
         ejecutar_menu(operaciones, self.leer, self.escribir)
-
-    def _pendiente(self):
-        self.escribir("Opción no disponible todavía.")
 
     def _intentar(self, operacion, accion):
         """Ejecuta `operacion`; si el servicio la rechaza o no puede guardar, muestra el motivo."""
@@ -150,3 +147,15 @@ class Consola:
         )
         if prestamo is not None:
             self.escribir(f"Devolución registrada: {prestamo.libro_id} está disponible.")
+
+    def consultar_vencidos(self):
+        """CU-002, flujo alternativo 1a: lista los préstamos vencidos (HU-005, RN-03)."""
+        vencidos = self.servicio.consultar_vencidos()
+        if not vencidos:
+            self.escribir("No hay préstamos vencidos.")
+            return
+        for vencido in vencidos:
+            self.escribir(
+                f"{vencido.libro_id} | {vencido.titulo} | {vencido.estudiante} | "
+                f"{fecha_a_texto(vencido.fecha_prevista)}"
+            )
