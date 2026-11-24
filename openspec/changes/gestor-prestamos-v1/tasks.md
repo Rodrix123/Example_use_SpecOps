@@ -161,7 +161,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     conserva la fecha. El comando de pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/consola.py`, `tests/test_consola.py`.
 
-- [ ] 5.2 TASK-013 Menú principal
+- [x] 5.2 TASK-013 Menú principal
   - **Objetivo:** Ofrecer el menú numérico y el ciclo de la aplicación.
   - **Requisito asociado:** RNF-02; design Decisión 8.
   - **Resultado esperado:** Menú con una opción numerada por operación (registrar libro, consultar

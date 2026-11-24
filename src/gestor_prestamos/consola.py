@@ -28,3 +28,38 @@ def texto_a_fecha(texto):
 def fecha_a_texto(fecha: date) -> str:
     """Convierte una fecha a `DD/MM/AAAA`."""
     return f"{fecha.day:02d}/{fecha.month:02d}/{fecha.year:04d}"
+
+
+# --- Menú principal (TASK-013; RNF-02; design Decisión 8) ----------------------------------------
+
+OPCIONES = (
+    "Registrar libro",
+    "Consultar catálogo",
+    "Registrar préstamo",
+    "Registrar devolución",
+    "Consultar préstamos vencidos",
+)
+SALIR = str(len(OPCIONES) + 1)
+
+
+def ejecutar_menu(operaciones, leer=input, escribir=print):
+    """Muestra el menú numerado y ejecuta la operación elegida hasta que se elige salir.
+
+    `operaciones` son cinco funciones sin argumentos, en el orden de `OPCIONES`. `leer` y `escribir`
+    se inyectan para poder probar sin teclado. Si la entrada se agota, el ciclo termina.
+    """
+    while True:
+        escribir("")
+        for numero, titulo in enumerate(OPCIONES, start=1):
+            escribir(f"{numero}. {titulo}")
+        escribir(f"{SALIR}. Salir")
+        try:
+            opcion = leer("Elija una opción: ").strip()
+        except EOFError:
+            return
+        if opcion == SALIR:
+            return
+        if opcion.isdigit() and 1 <= int(opcion) <= len(operaciones):
+            operaciones[int(opcion) - 1]()
+        else:
+            escribir(f"Opción no válida. Escriba un número del 1 al {SALIR}.")
