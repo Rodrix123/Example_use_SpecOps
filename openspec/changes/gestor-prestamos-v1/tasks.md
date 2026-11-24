@@ -137,7 +137,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
     pruebas pasa.
   - **Límites de modificación:** `src/gestor_prestamos/servicio.py`, `tests/test_servicio.py`.
 
-- [ ] 4.6 TASK-011 Consultar préstamos vencidos
+- [x] 4.6 TASK-011 Consultar préstamos vencidos
   - **Objetivo:** Devolver exactamente los préstamos vencidos.
   - **Requisito asociado:** HU-005, RN-03; CU-002 (flujo alternativo 1a); design Decisión 6.
   - **Resultado esperado:** Operación que devuelve los préstamos activos con fecha prevista anterior

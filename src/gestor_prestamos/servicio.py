@@ -26,6 +26,16 @@ class EntradaCatalogo:
     fecha_prevista: date | None = None
 
 
+@dataclass(frozen=True)
+class EntradaVencido:
+    """Un préstamo vencido: libro, estudiante y fecha prevista (HU-005)."""
+
+    libro_id: str
+    titulo: str
+    estudiante: str
+    fecha_prevista: date
+
+
 class ErrorNegocio(Exception):
     """Rechazo de una operación por una regla de negocio; `motivo` explica la causa."""
 
@@ -141,6 +151,24 @@ class Servicio:
         prestamos = [cerrado if prestamo is activo else prestamo for prestamo in self.prestamos]
         self._guardar(list(self.libros), prestamos)
         return cerrado
+
+    def consultar_vencidos(self):
+        """Préstamos activos con fecha prevista anterior a hoy (HU-005, RN-03; CU-002 flujo 1a).
+        No modifica datos."""
+        hoy = self.hoy()
+        vencidos = []
+        for prestamo in self.prestamos:
+            if prestamo.activo and prestamo.fecha_prevista < hoy:
+                libro = self._buscar_libro(prestamo.libro_id)
+                vencidos.append(
+                    EntradaVencido(
+                        libro_id=prestamo.libro_id,
+                        titulo=libro.titulo if libro else "",
+                        estudiante=prestamo.estudiante,
+                        fecha_prevista=prestamo.fecha_prevista,
+                    )
+                )
+        return vencidos
 
 
 def _falta(valor) -> bool:

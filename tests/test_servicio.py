@@ -305,5 +305,60 @@ class PruebaRegistrarDevolucion(unittest.TestCase):
         self.assertFalse(servicio.prestamos[0].activo)
 
 
+class PruebaConsultarVencidos(unittest.TestCase):
+    """TASK-011: TEST-050 a TEST-056."""
+
+    def ids(self, servicio):
+        return [entrada.libro_id for entrada in servicio.consultar_vencidos()]
+
+    def test_050_prestamo_con_fecha_pasada_aparece(self):
+        servicio, _ = crear([L001], [Prestamo("L-001", "Ana Pérez", AYER, True)])
+        (vencido,) = servicio.consultar_vencidos()
+        self.assertEqual(vencido.libro_id, "L-001")
+        self.assertEqual(vencido.titulo, "Cien años de soledad")
+        self.assertEqual(vencido.estudiante, "Ana Pérez")
+        self.assertEqual(vencido.fecha_prevista, AYER)
+
+    def test_051_fecha_de_hoy_no_esta_vencida(self):
+        servicio, _ = crear([L001], [Prestamo("L-001", "Ana Pérez", HOY, True)])
+        self.assertEqual(servicio.consultar_vencidos(), [])
+
+    def test_052_fecha_futura_no_esta_vencida(self):
+        servicio, _ = crear([L001], [Prestamo("L-001", "Ana Pérez", FUTURA, True)])
+        self.assertEqual(servicio.consultar_vencidos(), [])
+
+    def test_053_prestamo_devuelto_no_aparece(self):
+        servicio, _ = crear([L001], [Prestamo("L-001", "Ana Pérez", PASADA, False)])
+        self.assertEqual(servicio.consultar_vencidos(), [])
+
+    def test_054_sin_vencidos_lista_vacia(self):
+        sin_prestamos, _ = crear([L001])
+        no_vencido, _ = crear([L001], [Prestamo("L-001", "Ana Pérez", FUTURA, True)])
+        self.assertEqual(sin_prestamos.consultar_vencidos(), [])
+        self.assertEqual(no_vencido.consultar_vencidos(), [])
+
+    def test_055_devuelve_exactamente_los_vencidos(self):
+        libros = [L001, L002, L003, ("L-004", "Libro 4", "Autor 4"), ("L-005", "Libro 5", "Autor 5")]
+        prestamos = [
+            Prestamo("L-001", "Ana Pérez", PASADA, True),
+            Prestamo("L-002", "Luis Gómez", AYER, True),
+            Prestamo("L-003", "Ana Pérez", HOY, True),
+            Prestamo("L-004", "Luis Gómez", FUTURA, True),
+            Prestamo("L-005", "Ana Pérez", PASADA, False),
+        ]
+        servicio, _ = crear(libros, prestamos)
+        vencidos = servicio.consultar_vencidos()
+        self.assertEqual([v.libro_id for v in vencidos], ["L-001", "L-002"])
+        self.assertEqual([(v.estudiante, v.fecha_prevista) for v in vencidos],
+                         [("Ana Pérez", PASADA), ("Luis Gómez", AYER)])
+
+    def test_056_consultar_no_modifica_datos(self):
+        servicio, almacen = crear([L001], [Prestamo("L-001", "Ana Pérez", AYER, True)])
+        antes = instantanea(servicio)
+        servicio.consultar_vencidos()
+        self.assertEqual(instantanea(servicio), antes)
+        self.assertEqual(almacen.guardados, 0)
+
+
 if __name__ == "__main__":
     unittest.main()
