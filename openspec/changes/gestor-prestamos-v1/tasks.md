@@ -15,7 +15,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
 
 ## 1. Preparación del proyecto
 
-- [ ] 1.1 TASK-001 Crear el paquete `gestor_prestamos` y fijar el comando de pruebas
+- [x] 1.1 TASK-001 Crear el paquete `gestor_prestamos` y fijar el comando de pruebas
   - **Objetivo:** Dejar la estructura base en `src/` y una forma única de ejecutar las pruebas.
   - **Requisito asociado:** RS-01, RS-02, RS-03; design Decisiones 1 y 10.
   - **Resultado esperado:** Paquete `src/gestor_prestamos/` con los módulos `modelos`, `servicio`,
