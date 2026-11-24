@@ -76,7 +76,7 @@ Fuentes: [`proposal.md`](proposal.md), [`design.md`](design.md) y specs
 
 ## 4. Servicio: reglas de negocio
 
-- [ ] 4.1 TASK-006 Base del servicio: error de negocio, almacén y fecha inyectados
+- [x] 4.1 TASK-006 Base del servicio: error de negocio, almacén y fecha inyectados
   - **Objetivo:** Preparar el servicio para probarse con datos y fecha simulados.
   - **Requisito asociado:** RNF-03; design Decisiones 1, 6 y 7.
   - **Resultado esperado:** Error de negocio que lleva el motivo del rechazo; servicio que recibe el
